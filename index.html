@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="master.css">
+        <script src="main.js"></script>
+        <title>Timeline editor</title>
+    </head>
+    <body onload="main();">
+        <main style="display: flex; flex-direction: row;">
+            <section id="section_sidebar">
+                <h1>Add event</h1>
+                <div class="form">
+                    <input type="text"  id="input_event_name" ></input><br />
+                    <input type="date"  id="input_event_date" ></input>
+                    <input type="color" id="input_event_color"></input><br />
+                    <button id="button_add_event" onclick="add_event_handler()">Add event</button>
+                </div>
+            </section>
+            <section id="section_main" style="display: flex; flex-direction: column;">
+                <canvas id="canvas_timeline"></canvas>
+                <div id="events_container" style="max-width: 20vw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Event name</td>
+                                <td>Event time</td>
+                                <td>Color</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_events">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>
