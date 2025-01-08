@@ -13,6 +13,7 @@ Y_MAX =  canvas.height / 2;
 
 // The scale is the number of days that are visible on the timeline.
 let scale  = 120.0;
+let scroll_speed = 0.03;
 // The offset is the x coordinate of today on the screen.
 let offset = 0.0;
 
@@ -55,7 +56,8 @@ function draw_text(text, x, y) {
 
 function draw_timeline() {
     // Draw timeline
-    context.fillStyle = "black";
+    context.fillStyle   = "black";
+    context.strokeStyle = "black";
     draw_line(X_MIN, 0, X_MAX, 0);
 
     // Determine scale
@@ -159,77 +161,6 @@ function draw_timeline() {
     }
 
     date = date.addDays(1);
-
-    /*
-    if (day_step > 60) {
-        console.log(`Day step: ${day_step}, drawing days`);
-
-        // Calculate left-most line of scale
-        // TODO: This can probably be calculated in closed form
-        let start = offset;
-        let date = new Date();
-        while (start - day_step >= X_MIN) {
-            start -= day_step;
-            date = date.addDays(-1);
-        }
-
-        // Draw lines of scale from left to right
-        for (let x = start; x < X_MAX; x += day_step) {
-            draw_line(x, 5, x, -5);
-            draw_text(date.date_text_yyyymmdd(), x, 20);
-
-            date = date.addDays(1);
-        }
-
-        return;
-    }
-    if (month_step > 45) {
-        console.log(`Day step: ${day_step}, month step: ${month_step}, drawing months`);
-
-        // Calculate left-most line of scale
-        // TODO: This can probably be calculated in closed form
-        let start = offset;
-        let date = new Date();
-        while (start - day_step >= X_MIN) {
-            start -= day_step;
-            date = date.addDays(-1);
-        }
-
-        // Draw lines of scale from left to right
-        for (let x = start; x < X_MAX; x += day_step) {
-            if (date.getDate() == 1) {
-                draw_line(x, 5, x, -5);
-                draw_text(date.date_text_yyyymm(), x, 20);
-            }
-            date = date.addDays(1);
-        }
-
-        return;
-    }
-    else {
-        console.log(`Day step: ${day_step}, month step: ${month_step}, drawing years`);
-
-        // Calculate left-most line of scale
-        // TODO: This can probably be calculated in closed form
-        let start = offset;
-        let date = new Date();
-        while (start - day_step >= X_MIN) {
-            start -= day_step;
-            date = date.addDays(-1);
-        }
-
-        // Draw lines of scale from left to right
-        for (let x = start; x < X_MAX; x += day_step) {
-            if (date.getDate() == 1) {
-                draw_line(x, 5, x, -5);
-                draw_text(date.date_text_yyyymm(), x, 20);
-            }
-            date = date.addDays(1);
-        }
-
-        return;
-    }
-    */
 }
 
 function draw_event(event) {
@@ -271,3 +202,9 @@ function add_event_handler() {
     // Trigger redraw
     draw_all();
 }
+
+canvas.addEventListener('wheel', (e) => {
+    scale += scroll_speed * e.deltaY;
+    console.log(`Scroll with deltaY = ${e.deltaY}, new scale is ${scale}`);
+    draw_all();
+});
