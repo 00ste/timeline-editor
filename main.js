@@ -12,8 +12,10 @@ Y_MIN = -canvas.height / 2;
 Y_MAX =  canvas.height / 2;
 
 // The scale is the number of days that are visible on the timeline.
-let scale  = 120.0;
-let scroll_speed = 0.03;
+let   scale        = 12.0;
+const scale_min    = 5.0;
+const scale_max    = 6000.0;
+const scroll_speed = 0.0003;
 // The offset is the x coordinate of today on the screen.
 let offset = 0.0;
 
@@ -42,7 +44,21 @@ Date.prototype.date_text_yyyymm = function() {
     return `${this.getFullYear()}-${this.getMonth() + 1}`;
 }
 
+function clamp(x, x_min, x_max) {
+    return Math.min(Math.max(x_min, x), x_max);
+}
+
+// ====================== DRAW FUNCTIONS ======================
+
+function draw_clear() {
+    let old = context.fillStyle;
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = old;
+}
+
 function draw_line(start_x, start_y, end_x, end_y) {
+    context.beginPath();
     context.moveTo(start_x + canvas.width / 2, start_y + canvas.height / 2);
     context.lineTo(end_x   + canvas.width / 2, end_y   + canvas.height / 2);
     context.stroke();
@@ -51,8 +67,6 @@ function draw_line(start_x, start_y, end_x, end_y) {
 function draw_text(text, x, y) {
     context.fillText(text, x + canvas.width / 2, y + canvas.height / 2);
 }
-
-// ====================== DRAW FUNCTIONS ======================
 
 function draw_timeline() {
     // Draw timeline
@@ -159,8 +173,6 @@ function draw_timeline() {
             date = date.addDays(1);
         }
     }
-
-    date = date.addDays(1);
 }
 
 function draw_event(event) {
@@ -169,8 +181,7 @@ function draw_event(event) {
 }
 
 function draw_all() {
-    context.fillStyle = "white";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    draw_clear();
 
     draw_timeline(canvas, context);
 
@@ -204,7 +215,7 @@ function add_event_handler() {
 }
 
 canvas.addEventListener('wheel', (e) => {
-    scale += scroll_speed * e.deltaY;
-    console.log(`Scroll with deltaY = ${e.deltaY}, new scale is ${scale}`);
+    scale   = clamp(scale * Math.exp(scroll_speed * e.deltaY), scale_min, scale_max);
+    offset -= e.deltaX;
     draw_all();
 });
